@@ -10,6 +10,7 @@ namespace TrayDesk
         private readonly double _minUpShare;
         private readonly TimeSpan _reportingSpan;
         private readonly TimeSpan _daybreak;
+        private readonly TimeSpan _dontWarnBefore;
 
         private DateTime _lastReport = DateTime.MinValue;
         private bool _locked;
@@ -19,7 +20,7 @@ namespace TrayDesk
 
         public double UpShare => Up.TotalSeconds / (Down.TotalSeconds + Up.TotalSeconds);
 
-        public bool ShowWarning => UpShare < _minUpShare;
+        public bool ShowWarning => UpShare < _minUpShare && Up + Down > _dontWarnBefore;
 
         public UpDownTimer()
         {
@@ -27,6 +28,7 @@ namespace TrayDesk
             _minUpShare = double.Parse(ConfigurationManager.AppSettings["MinUpShare"]);
             _reportingSpan = TimeSpan.Parse(ConfigurationManager.AppSettings["ReportingSpan"]);
             _daybreak = TimeSpan.Parse(ConfigurationManager.AppSettings["Daybreak"]);
+            _dontWarnBefore = TimeSpan.Parse(ConfigurationManager.AppSettings["DontWarnBefore"]);
 
             // This even is fired whenever user locks/unlocks the PC
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
