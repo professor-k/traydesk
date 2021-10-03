@@ -13,6 +13,7 @@ namespace TrayDesk
         private readonly TimeSpan _dontWarnBefore;
 
         private DateTime _lastReport = DateTime.MinValue;
+        private bool _lastDown;
         private bool _locked;
 
         public TimeSpan Up { get; private set; }
@@ -20,7 +21,7 @@ namespace TrayDesk
 
         public double UpShare => Up.TotalSeconds / (Down.TotalSeconds + Up.TotalSeconds);
 
-        public bool ShowWarning => UpShare < _minUpShare && Up + Down > _dontWarnBefore;
+        public bool ShowWarning => UpShare < _minUpShare && Up + Down > _dontWarnBefore && _lastDown;
 
         public UpDownTimer()
         {
@@ -50,11 +51,13 @@ namespace TrayDesk
             _lastReport = DateTime.Now;
             if (height > _heightThreshold)
             {
-                Up = Up.Add(_reportingSpan);
+                _lastDown = false;
+                Up += _reportingSpan;
             }
             else
             {
-                Down = Down.Add(_reportingSpan);
+                _lastDown = true;
+                Down += _reportingSpan;
             }
         }
 
