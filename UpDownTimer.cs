@@ -42,7 +42,8 @@ namespace TrayDesk
                 return;
             }
 
-            if (_lastReport < DateTime.Today.Add(_daybreak))
+            var daybreak = DateTime.Today.Add(_daybreak);
+            if (_lastReport < daybreak && DateTime.Now >= daybreak)
             {
                 // it's new day, let's reset timers to zero
                 Up = Down = TimeSpan.Zero;
