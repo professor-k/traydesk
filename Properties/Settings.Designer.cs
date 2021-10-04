@@ -88,5 +88,41 @@ namespace TrayDesk.Properties {
                 this["DontWarnBefore"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:00:00")]
+        public global::System.TimeSpan Up {
+            get {
+                return ((global::System.TimeSpan)(this["Up"]));
+            }
+            set {
+                this["Up"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:00:00")]
+        public global::System.TimeSpan Down {
+            get {
+                return ((global::System.TimeSpan)(this["Down"]));
+            }
+            set {
+                this["Down"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1970-01-01")]
+        public global::System.DateTime LastReport {
+            get {
+                return ((global::System.DateTime)(this["LastReport"]));
+            }
+            set {
+                this["LastReport"] = value;
+            }
+        }
     }
 }

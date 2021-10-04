@@ -12,7 +12,7 @@ namespace TrayDesk
         private readonly TimeSpan _daybreak;
         private readonly TimeSpan _dontWarnBefore;
 
-        private DateTime _lastReport = DateTime.MinValue;
+        private DateTime _lastReport;
         private bool _lastDown;
         private bool _locked;
 
@@ -25,11 +25,17 @@ namespace TrayDesk
 
         public UpDownTimer()
         {
+            // general configuration
             _heightThreshold = Settings.Default.HeightThreshold;
             _minUpShare = Settings.Default.MinUpShare;
             _reportingSpan = Settings.Default.ReportingSpan;
             _daybreak = Settings.Default.Daybreak;
             _dontWarnBefore = Settings.Default.DontWarnBefore;
+
+            // last state
+            Down = Settings.Default.Down;
+            Up = Settings.Default.Up;
+            _lastReport = Settings.Default.LastReport;
 
             // This even is fired whenever user locks/unlocks the PC
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
@@ -59,6 +65,15 @@ namespace TrayDesk
             {
                 _lastDown = true;
                 Down += _reportingSpan;
+            }
+
+            // Just save once in a minute, that should be enough
+            if (_lastReport.Second == 0)
+            {
+                Settings.Default.Down = Down;
+                Settings.Default.Up = Up;
+                Settings.Default.LastReport = _lastReport;
+                Settings.Default.Save();
             }
         }
 
