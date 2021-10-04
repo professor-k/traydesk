@@ -21,6 +21,8 @@ namespace TrayDesk
 
         public double UpShare => Up.TotalSeconds / (Down.TotalSeconds + Up.TotalSeconds);
 
+        public TimeSpan AvailableDownTime => (1 / _minUpShare - 1) * Up - Down;
+
         public bool ShowWarning => UpShare < _minUpShare && Up + Down > _dontWarnBefore && _lastDown;
 
         public UpDownTimer()

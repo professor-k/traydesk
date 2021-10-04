@@ -45,7 +45,12 @@ namespace TrayDesk
             var icon = IconBuilder.CreateIcon(_upDownTimer.Up, _upDownTimer.Down, _upDownTimer.ShowWarning && _blink);
             _blink = !_blink;
             _trayIcon.Icon = icon;
-            _trayIcon.Text = $"Up: {_upDownTimer.Up}\r\nDown: {_upDownTimer.Down}\r\nUp share: {_upDownTimer.UpShare:P}";
+            var availableDownTime = _upDownTimer.AvailableDownTime;
+            var availableDownTimeTruncated = new TimeSpan(availableDownTime.Ticks - (availableDownTime.Ticks % 10000000));
+            _trayIcon.Text = @$"Up: {_upDownTimer.Up}
+Down: {_upDownTimer.Down}
+Share: {_upDownTimer.UpShare:P}
+Avail: {availableDownTimeTruncated}";
 
             // Handle must be destroyed to prevent memory leakage
             DestroyIcon(icon.Handle);
