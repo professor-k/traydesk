@@ -1,6 +1,6 @@
 using System;
-using System.Configuration;
 using Microsoft.Win32;
+using TrayDesk.Properties;
 
 namespace TrayDesk
 {
@@ -25,11 +25,11 @@ namespace TrayDesk
 
         public UpDownTimer()
         {
-            _heightThreshold = int.Parse(ConfigurationManager.AppSettings["HeightThreshold"]);
-            _minUpShare = double.Parse(ConfigurationManager.AppSettings["MinUpShare"]);
-            _reportingSpan = TimeSpan.Parse(ConfigurationManager.AppSettings["ReportingSpan"]);
-            _daybreak = TimeSpan.Parse(ConfigurationManager.AppSettings["Daybreak"]);
-            _dontWarnBefore = TimeSpan.Parse(ConfigurationManager.AppSettings["DontWarnBefore"]);
+            _heightThreshold = Settings.Default.HeightThreshold;
+            _minUpShare = Settings.Default.MinUpShare;
+            _reportingSpan = Settings.Default.ReportingSpan;
+            _daybreak = Settings.Default.Daybreak;
+            _dontWarnBefore = Settings.Default.DontWarnBefore;
 
             // This even is fired whenever user locks/unlocks the PC
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
