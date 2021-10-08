@@ -42,6 +42,8 @@ namespace TrayDesk
         private bool _blink;
         private void timer_Tick(object sender, EventArgs e)
         {
+            _serialPortParser.TryReopenIfNeeded();
+
             var icon = IconBuilder.CreateIcon(_upDownTimer.Up, _upDownTimer.Down, _upDownTimer.ShowWarning && _blink);
             _blink = !_blink;
             _trayIcon.Icon = icon;

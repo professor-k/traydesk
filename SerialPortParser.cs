@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.IO.Ports;
 
 namespace TrayDesk
@@ -14,7 +15,6 @@ namespace TrayDesk
         {
             _port = new(portName, 9600, Parity.None, 8, StopBits.One);
             _port.DataReceived += port_DataReceived;
-            _port.Open();
         }
 
         private void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -30,6 +30,21 @@ namespace TrayDesk
             foreach (var part in parts)
             {
                 DataReceived?.Invoke(this, int.Parse(part));
+            }
+        }
+
+        public void TryReopenIfNeeded()
+        {
+            if (!_port.IsOpen)
+            {
+                try
+                {
+                    _port.Open();
+                }
+                catch (FileNotFoundException)
+                {
+                    // Arduino is not connected, just do nothing
+                }
             }
         }
 
