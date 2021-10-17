@@ -114,10 +114,10 @@ namespace TrayDesk
             DrawDigit(bitmap, 13, yOffset, span.Minutes % 10, color);
         }
 
-        public static Icon CreateIcon(TimeSpan up, TimeSpan down, bool warn)
+        public static Icon CreateIcon(TimeSpan up, TimeSpan down, bool warn, bool open)
         {
             var bitmap = new Bitmap(16, 16);
-            if (!warn)
+            if (!warn || !open)
             {
                 bitmap.MakeTransparent();
             }
@@ -127,8 +127,8 @@ namespace TrayDesk
                 g.Clear(Color.Yellow);
             }
 
-            CreateTimeSpan(bitmap, up, 2, Color.Green);
-            CreateTimeSpan(bitmap, down, 9, Color.Red);
+            CreateTimeSpan(bitmap, up, 2, open ? Color.Green : Color.Gray);
+            CreateTimeSpan(bitmap, down, 9, open ? Color.Red : Color.Gray);
 
             IntPtr hIcon = bitmap.GetHicon();
             Icon icon = Icon.FromHandle(hIcon);

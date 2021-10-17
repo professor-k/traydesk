@@ -44,7 +44,7 @@ namespace TrayDesk
         {
             _serialPortParser.TryReopenIfNeeded();
 
-            var icon = IconBuilder.CreateIcon(_upDownTimer.Up, _upDownTimer.Down, _upDownTimer.ShowWarning && _blink);
+            var icon = IconBuilder.CreateIcon(_upDownTimer.Up, _upDownTimer.Down, _upDownTimer.ShowWarning && _blink, _serialPortParser.IsOpen);
             _blink = !_blink;
             _trayIcon.Icon = icon;
             var availableDownTime = _upDownTimer.AvailableDownTime;

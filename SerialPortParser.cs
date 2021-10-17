@@ -48,6 +48,8 @@ namespace TrayDesk
             }
         }
 
+        public bool IsOpen => _port.IsOpen;
+
         public void Dispose()
         {
             _port?.Dispose();
