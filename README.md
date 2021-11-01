@@ -11,6 +11,8 @@ To make it work, you'll need Arduino microcontroller (cheapest Nano you'll find 
 2. Use cable to connect Arduino to computer and flash TrayDesk.ino sketch. You'll need Arduino Studio for this and may be driver for your Arduino. Google for Arduino tutorials if you are new to it, it's all straightforward anyway. Pay attention to COM port that was assigned to Arduino. After you've confirmed it is working, you can uninstall Arduino studio.
 3. Attach the sensor under the top of your desk pointing downwards, somewhere where it will have clear sight down to the floor.
 
+![image](https://user-images.githubusercontent.com/572940/139666355-ca6abfb5-3cb5-4555-b089-4a4f5b208dd0.png)
+
 # Software part
 There is no configuration window at the moment, so all setting to be done manually via editing of App.config
 1. Port: write in COM port assigned to Arduino.
