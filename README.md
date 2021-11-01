@@ -7,7 +7,7 @@ Time is only tracked when computer is unlocked, so only action really needed fro
 
 # Hardware part
 To make it work, you'll need Arduino microcontroller (cheapest Nano you'll find will do just fine) and HC-SR04 ultrasonic distance sensor (pretty cheap too). You'll also need USB cable to connect this thing to your computer. All together this setup will cost you probably quarter of what cheapest chess clock would.
-1. It is expected that HC-SR04 VCC, TRIG, ECHO and GND pins are connected to 5V, D12, D11 and GND pins of Arduino module respectively. No more wiring needed.
+1. It is expected that HC-SR04 VCC, TRIG, ECHO and GND pins are connected to D4, D5, D6 and D7 pins of Arduino module respectively. No more wiring needed.
 2. Use cable to connect Arduino to computer and flash TrayDesk.ino sketch. You'll need Arduino Studio for this and may be driver for your Arduino. Google for Arduino tutorials if you are new to it, it's all straightforward anyway. Pay attention to COM port that was assigned to Arduino. After you've confirmed it is working, you can uninstall Arduino studio.
 3. Attach the sensor under the top of your desk pointing downwards, somewhere where it will have clear sight down to the floor.
 
