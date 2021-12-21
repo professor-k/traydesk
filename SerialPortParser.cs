@@ -1,20 +1,53 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
+using Microsoft.Win32;
 
 namespace TrayDesk
 {
     public class SerialPortParser : IDisposable
     {
-        private readonly SerialPort _port;
+        private SerialPort _port;
         private string _buffer = string.Empty;
 
         public event EventHandler<int> DataReceived;
 
-        public SerialPortParser(string portName)
+        private readonly string[] _arduinoKeys = {
+            @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\usbser\Enum",
+            @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\CH341SER_A64\Enum"
+        };
+
+        /// <summary>
+        /// See https://arduino.stackexchange.com/questions/30808/how-to-detect-arduino-serial-port-programmatically-on-different-platforms/80887
+        /// </summary>
+        private IEnumerable<(string name, string port)> EnumerateArduinos()
         {
-            _port = new(portName, 9600, Parity.None, 8, StopBits.One);
-            _port.DataReceived += port_DataReceived;
+            foreach (var arduinoKey in _arduinoKeys)
+            {
+                var countObject  = Registry.GetValue(arduinoKey, "Count", null);
+                if (countObject is not int count)
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    var enumObject = Registry.GetValue(arduinoKey, i.ToString(), null);
+                    if (enumObject is not string enumKey)
+                    {
+                        continue;
+                    }
+
+                    var friendlyName = Registry.GetValue($@"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\{enumKey}", "FriendlyName", null);
+                    var portName = Registry.GetValue($@"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\{enumKey}\Device Parameters", "PortName", null);
+                    if (portName is string port && friendlyName is string name)
+                    {
+                        yield return (name, port);
+                    }
+                }
+            }
         }
 
         private void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -35,10 +68,19 @@ namespace TrayDesk
 
         public void TryReopenIfNeeded()
         {
-            if (!_port.IsOpen)
+            if (_port is not { IsOpen: true })
             {
                 try
                 {
+                    var port = EnumerateArduinos().FirstOrDefault().port;
+
+                    if (string.IsNullOrEmpty(port))
+                    {
+                        return;
+                    }
+
+                    _port = new(port, 9600, Parity.None, 8, StopBits.One);
+                    _port.DataReceived += port_DataReceived;
                     _port.Open();
                 }
                 catch (FileNotFoundException)

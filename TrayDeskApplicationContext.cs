@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using TrayDesk.Properties;
 
 namespace TrayDesk
 {
@@ -16,7 +15,7 @@ namespace TrayDesk
         public TrayDeskApplicationContext()
         {
             _upDownTimer = new UpDownTimer();
-            _serialPortParser = new SerialPortParser(Settings.Default.Port);
+            _serialPortParser = new SerialPortParser();
             _serialPortParser.DataReceived += _serialPortParser_DataReceived;
 
             var strip = new ContextMenuStrip();
