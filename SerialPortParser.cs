@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using log4net;
 using Microsoft.Win32;
 
 namespace TrayDesk
@@ -11,6 +11,8 @@ namespace TrayDesk
     {
         private SerialPort _port;
         private string _buffer = string.Empty;
+
+        private readonly ILog _log = LogManager.GetLogger(typeof(Program));
 
         public event EventHandler<int> DataReceived;
 
@@ -57,9 +59,9 @@ namespace TrayDesk
             string value = _buffer + _port.ReadExisting();
             var separator = new[] { '\r', '\n' };
             var lastTerminator = value.LastIndexOfAny(separator);
-            _buffer = value.Substring(lastTerminator);
+            _buffer = value[lastTerminator..];
 
-            var parts = value.Substring(0, lastTerminator).Split(separator, StringSplitOptions.RemoveEmptyEntries);
+            var parts = value[..lastTerminator].Split(separator, StringSplitOptions.RemoveEmptyEntries);
             foreach (var part in parts)
             {
                 DataReceived?.Invoke(this, int.Parse(part));
@@ -70,23 +72,19 @@ namespace TrayDesk
         {
             if (_port is not { IsOpen: true })
             {
-                try
-                {
-                    var port = EnumerateArduinos().FirstOrDefault().port;
+                var port = EnumerateArduinos().FirstOrDefault().port;
 
-                    if (string.IsNullOrEmpty(port))
-                    {
-                        return;
-                    }
-
-                    _port = new(port, 9600, Parity.None, 8, StopBits.One);
-                    _port.DataReceived += port_DataReceived;
-                    _port.Open();
-                }
-                catch (FileNotFoundException)
+                if (string.IsNullOrEmpty(port))
                 {
-                    // Arduino is not connected, just do nothing
+                    // No arduino found
+                    return;
                 }
+
+                _port = new(port, 9600, Parity.None, 8, StopBits.One);
+                _port.DataReceived += port_DataReceived;
+                _port.Open();
+
+                _log.Info($"Found arduino at {port}.");
             }
         }
 
@@ -95,6 +93,7 @@ namespace TrayDesk
         public void Dispose()
         {
             _port?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

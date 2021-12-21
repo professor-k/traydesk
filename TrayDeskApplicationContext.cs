@@ -27,9 +27,11 @@ namespace TrayDesk
                 Visible = true,
             };
 
-            _timer = new Timer();
-            _timer.Enabled = true;
-            _timer.Interval = 1000;
+            _timer = new Timer
+            {
+                Enabled = true,
+                Interval = 1000,
+            };
             _timer.Tick += timer_Tick;
         }
 
