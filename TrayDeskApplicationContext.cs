@@ -19,6 +19,7 @@ namespace TrayDesk
             _serialPortParser.DataReceived += _serialPortParser_DataReceived;
 
             var strip = new ContextMenuStrip();
+            strip.Items.Add(new ToolStripMenuItem("Pause", null, pauseToolStripMenuItem_Click));
             strip.Items.Add(new ToolStripMenuItem("Exit", null, (_, _) => Application.Exit()));
 
             _trayIcon = new NotifyIcon
@@ -35,6 +36,13 @@ namespace TrayDesk
             _timer.Tick += timer_Tick;
         }
 
+        private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var menuItem = (ToolStripMenuItem)sender;
+            _upDownTimer.Pause = !_upDownTimer.Pause;
+            menuItem.Text = _upDownTimer.Pause ? "Resume" : "Pause";
+        }
+
         private void _serialPortParser_DataReceived(object sender, int e)
         {
             _upDownTimer.AddReport(e);
@@ -45,15 +53,27 @@ namespace TrayDesk
         {
             _serialPortParser.TryReopenIfNeeded();
 
-            var icon = IconBuilder.CreateIcon(_upDownTimer.Up, _upDownTimer.Down, _upDownTimer.ShowWarning && _blink, _serialPortParser.IsOpen);
+            var icon = IconBuilder.CreateIcon(_upDownTimer.Up, _upDownTimer.Down, _upDownTimer.ShowWarning && _blink, _serialPortParser.IsOpen && !_upDownTimer.Pause);
             _blink = !_blink;
             _trayIcon.Icon = icon;
             var availableDownTime = _upDownTimer.AvailableDownTime;
             var availableDownTimeTruncated = new TimeSpan(availableDownTime.Ticks - (availableDownTime.Ticks % 10000000));
-            _trayIcon.Text = @$"Up: {_upDownTimer.Up}
+
+            if (!_serialPortParser.IsOpen)
+            {
+                _trayIcon.Text = "No sensor detected";
+            }
+            else if (_upDownTimer.Pause)
+            {
+                _trayIcon.Text = "On pause";
+            }
+            else
+            {
+                _trayIcon.Text = @$"Up: {_upDownTimer.Up}
 Down: {_upDownTimer.Down}
 Share: {_upDownTimer.UpShare:P}
 Avail: {availableDownTimeTruncated}";
+            }
 
             // Handle must be destroyed to prevent memory leakage
             DestroyIcon(icon.Handle);

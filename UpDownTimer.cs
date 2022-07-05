@@ -18,6 +18,7 @@ namespace TrayDesk
 
         public TimeSpan Up { get; private set; }
         public TimeSpan Down { get; private set; }
+        public bool Pause { get; set; }
 
         public double UpShare => Up.TotalSeconds / (Down.TotalSeconds + Up.TotalSeconds);
 
@@ -45,7 +46,7 @@ namespace TrayDesk
 
         public void AddReport(int height)
         {
-            if (_locked)
+            if (_locked || Pause)
             {
                 return;
             }
