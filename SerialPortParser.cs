@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using log4net;
@@ -80,15 +81,23 @@ namespace TrayDesk
                     return;
                 }
 
-                _port = new(port, 9600, Parity.None, 8, StopBits.One);
-                _port.DataReceived += port_DataReceived;
-                _port.Open();
-
-                _log.Info($"Found arduino at {port}.");
+                try
+                {
+                    _port = new(port, 9600, Parity.None, 8, StopBits.One);
+                    _port.Open();
+                    _port.ReadExisting(); // just to clean the crap that could have been in the pipe
+                    _port.DataReceived += port_DataReceived;
+                    _log.Info($"Found arduino at {port}.");
+                }
+                catch (FileNotFoundException)
+                {
+                    // It is possible that even that device is present in regestry, it can't be open.
+                    // Usually happens around waking PC up. Just do nothing, we'll retry next time
+                }
             }
         }
 
-        public bool IsOpen => _port.IsOpen;
+        public bool IsOpen => _port?.IsOpen ?? false;
 
         public void Dispose()
         {
