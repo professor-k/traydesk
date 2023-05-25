@@ -3,3 +3,5 @@ obj/
 .vs/
 TrayDesk/build/
 TrayDesk/.vscode/
+*.cache
+*.user

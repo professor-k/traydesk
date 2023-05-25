@@ -8,6 +8,7 @@ namespace TrayDesk
     {
         private readonly NotifyIcon _trayIcon;
         private readonly Timer _timer;
+        private readonly ToolStripMenuItem _pauseMenuItem;
         private readonly UpDownTimer _upDownTimer;
 
         private readonly SerialPortParser _serialPortParser;
@@ -18,8 +19,9 @@ namespace TrayDesk
             _serialPortParser = new SerialPortParser();
             _serialPortParser.DataReceived += _serialPortParser_DataReceived;
 
+            _pauseMenuItem = new ToolStripMenuItem("Pause", null, pauseToolStripMenuItem_Click);
             var strip = new ContextMenuStrip();
-            strip.Items.Add(new ToolStripMenuItem("Pause", null, pauseToolStripMenuItem_Click));
+            strip.Items.Add(_pauseMenuItem);
             strip.Items.Add(new ToolStripMenuItem("Exit", null, (_, _) => Application.Exit()));
 
             _trayIcon = new NotifyIcon
@@ -38,9 +40,7 @@ namespace TrayDesk
 
         private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var menuItem = (ToolStripMenuItem)sender;
             _upDownTimer.Pause = !_upDownTimer.Pause;
-            menuItem.Text = _upDownTimer.Pause ? "Resume" : "Pause";
         }
 
         private void _serialPortParser_DataReceived(object sender, int e)
@@ -58,6 +58,8 @@ namespace TrayDesk
             _trayIcon.Icon = icon;
             var availableDownTime = _upDownTimer.AvailableDownTime;
             var availableDownTimeTruncated = new TimeSpan(availableDownTime.Ticks - (availableDownTime.Ticks % 10000000));
+
+            _pauseMenuItem.Text = _upDownTimer.Pause ? "Resume" : "Pause";
 
             if (!_serialPortParser.IsOpen)
             {

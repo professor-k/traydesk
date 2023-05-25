@@ -46,16 +46,18 @@ namespace TrayDesk
 
         public void AddReport(int height)
         {
-            if (_locked || Pause)
-            {
-                return;
-            }
-
             var daybreak = DateTime.Today.Add(_daybreak);
             if (_lastReport < daybreak && DateTime.Now >= daybreak)
             {
                 // it's new day, let's reset timers to zero
                 Up = Down = TimeSpan.Zero;
+                // also unpause if paused
+                Pause = false;
+            }
+
+            if (_locked || Pause)
+            {
+                return;
             }
 
             _lastReport = DateTime.Now;
