@@ -40,20 +40,15 @@ namespace TrayDesk
             Up = Settings.Default.Up;
             _lastReport = Settings.Default.LastReport;
 
+            ResetIfDaybreak();
+
             // This even is fired whenever user locks/unlocks the PC
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
         }
 
         public void AddReport(int height)
         {
-            var daybreak = DateTime.Today.Add(_daybreak);
-            if (_lastReport < daybreak && DateTime.Now >= daybreak)
-            {
-                // it's new day, let's reset timers to zero
-                Up = Down = TimeSpan.Zero;
-                // also unpause if paused
-                Pause = false;
-            }
+            ResetIfDaybreak();
 
             if (_locked || Pause)
             {
@@ -79,6 +74,18 @@ namespace TrayDesk
                 Settings.Default.Up = Up;
                 Settings.Default.LastReport = _lastReport;
                 Settings.Default.Save();
+            }
+        }
+
+        private void ResetIfDaybreak()
+        {
+            var daybreak = DateTime.Today.Add(_daybreak);
+            if (_lastReport < daybreak && DateTime.Now >= daybreak)
+            {
+                // it's new day, let's reset timers to zero
+                Up = Down = TimeSpan.Zero;
+                // also unpause if paused
+                Pause = false;
             }
         }
 
