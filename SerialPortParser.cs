@@ -17,10 +17,11 @@ namespace TrayDesk
 
         public event EventHandler<int> DataReceived;
 
-        private readonly string[] _arduinoKeys = {
+        private readonly string[] _arduinoKeys =
+        [
             @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\usbser\Enum",
             @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\CH341SER_A64\Enum"
-        };
+        ];
 
         /// <summary>
         /// See https://arduino.stackexchange.com/questions/30808/how-to-detect-arduino-serial-port-programmatically-on-different-platforms/80887
@@ -91,7 +92,7 @@ namespace TrayDesk
                 }
                 catch (FileNotFoundException)
                 {
-                    // It is possible that even that device is present in regestry, it can't be open.
+                    // It is possible that even that device is present in registry, it can't be open.
                     // Usually happens around waking PC up. Just do nothing, we'll retry next time
                 }
             }
