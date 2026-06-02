@@ -26,6 +26,11 @@ namespace TrayDesk
 
         public bool ShowWarning => UpShare < _minUpShare && Up + Down > _dontWarnBefore && _lastDown;
 
+        /// <summary>
+        /// We didn't get any message in five seconds, sensor must be malfunctioning
+        /// </summary>
+        public bool ShowError => _lastReport.AddSeconds(5) < DateTime.Now;
+
         public UpDownTimer()
         {
             // general configuration
@@ -41,6 +46,9 @@ namespace TrayDesk
             _lastReport = Settings.Default.LastReport;
 
             ResetIfDaybreak();
+
+            // To prevent "error" state before app start and the first report received
+            _lastReport = DateTime.Now;
 
             // This even is fired whenever user locks/unlocks the PC
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;

@@ -114,21 +114,48 @@ namespace TrayDesk
             DrawDigit(bitmap, 13, yOffset, span.Minutes % 10, color);
         }
 
-        public static Icon CreateIcon(TimeSpan up, TimeSpan down, bool warn, bool open)
+        [Flags]
+        public enum IconType
+        {
+            Default = 0,
+            Disconnected = 1,
+            Warn = 2,
+            Error = 4,
+            Blink = 8,
+        }
+
+        public static Icon CreateIcon(TimeSpan up, TimeSpan down, IconType @type)
         {
             var bitmap = new Bitmap(16, 16);
-            if (!warn || !open)
-            {
-                bitmap.MakeTransparent();
-            }
-            else
-            {
-                Graphics g = Graphics.FromImage(bitmap);
-                g.Clear(Color.Yellow);
-            }
 
-            CreateTimeSpan(bitmap, up, 2, open ? Color.Green : Color.Gray);
-            CreateTimeSpan(bitmap, down, 9, open ? Color.Red : Color.Gray);
+            var backgroundColor = type switch
+            {
+                IconType.Warn | IconType.Blink => Color.Yellow,
+                IconType.Error | IconType.Blink => Color.Red,
+                _ => Color.Transparent
+            };
+
+            var upColor = type switch
+            {
+                IconType.Disconnected => Color.Gray,
+                IconType.Disconnected | IconType.Blink => Color.Gray,
+                _ => Color.Green,
+            };
+
+            var downColor = type switch
+            {
+                IconType.Disconnected => Color.Gray,
+                IconType.Disconnected | IconType.Blink => Color.Gray,
+                IconType.Error | IconType.Blink => Color.Black,
+                _ => Color.Red,
+            };
+
+            Graphics g = Graphics.FromImage(bitmap);
+            g.Clear(backgroundColor);
+
+
+            CreateTimeSpan(bitmap, up, 2, upColor);
+            CreateTimeSpan(bitmap, down, 9, downColor);
 
             IntPtr hIcon = bitmap.GetHicon();
             Icon icon = Icon.FromHandle(hIcon);
