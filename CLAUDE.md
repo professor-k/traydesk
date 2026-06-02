@@ -18,7 +18,7 @@ dotnet build -c Release
 dotnet run                                # build + launch the tray app
 ```
 
-Targets `net8.0-windows` with WinForms. There are **no tests** and no linter configured. The `TrayDesk.sln` and stale `obj/` folders reference older frameworks (net5.0/net6.0) — the csproj is the source of truth (net8.0).
+Targets `net10.0-windows` with WinForms. There are **no tests** and no linter configured. The solution is in the XML `slnx` format (`TrayDesk.slnx`); build it directly or just build the csproj — the csproj is the source of truth for the TFM. Stale `obj/` folders may reference older frameworks (net5.0/net6.0); ignore them.
 
 ## Architecture
 
