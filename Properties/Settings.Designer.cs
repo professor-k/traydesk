@@ -79,7 +79,19 @@ namespace TrayDesk.Properties {
                 this["DontWarnBefore"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Annoying {
+            get {
+                return ((bool)(this["Annoying"]));
+            }
+            set {
+                this["Annoying"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("00:00:00")]

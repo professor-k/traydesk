@@ -6,11 +6,11 @@ namespace TrayDesk
 {
     public class UpDownTimer
     {
-        private readonly int _heightThreshold;
-        private readonly double _minUpShare;
+        private int _heightThreshold;
+        private double _minUpShare;
         private readonly TimeSpan _reportingSpan;
-        private readonly TimeSpan _daybreak;
-        private readonly TimeSpan _dontWarnBefore;
+        private TimeSpan _daybreak;
+        private TimeSpan _dontWarnBefore;
 
         private DateTime _lastReport;
         private bool _lastDown;
@@ -34,11 +34,8 @@ namespace TrayDesk
         public UpDownTimer()
         {
             // general configuration
-            _heightThreshold = Settings.Default.HeightThreshold;
-            _minUpShare = Settings.Default.MinUpShare;
             _reportingSpan = Settings.Default.ReportingSpan;
-            _daybreak = Settings.Default.Daybreak;
-            _dontWarnBefore = Settings.Default.DontWarnBefore;
+            LoadConfig();
 
             // last state
             Down = Settings.Default.Down;
@@ -52,6 +49,30 @@ namespace TrayDesk
 
             // This even is fired whenever user locks/unlocks the PC
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
+        }
+
+        private void LoadConfig()
+        {
+            _heightThreshold = Settings.Default.HeightThreshold;
+            _minUpShare = Settings.Default.MinUpShare;
+            _daybreak = Settings.Default.Daybreak;
+            _dontWarnBefore = Settings.Default.DontWarnBefore;
+        }
+
+        /// <summary>
+        /// Re-read the user-configurable settings, e.g. after they were changed in the settings window.
+        /// </summary>
+        public void ReloadConfig() => LoadConfig();
+
+        /// <summary>
+        /// Zero both counters (and persist), e.g. from the tray "Reset" menu.
+        /// </summary>
+        public void Reset()
+        {
+            Up = Down = TimeSpan.Zero;
+            Settings.Default.Up = Up;
+            Settings.Default.Down = Down;
+            Settings.Default.Save();
         }
 
         public void AddReport(int height)

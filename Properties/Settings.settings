@@ -17,6 +17,9 @@
     <Setting Name="DontWarnBefore" Type="System.TimeSpan" Scope="User">
       <Value Profile="(Default)">01:00:00</Value>
     </Setting>
+    <Setting Name="Annoying" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
     <Setting Name="Up" Type="System.TimeSpan" Scope="User">
       <Value Profile="(Default)">00:00:00</Value>
     </Setting>
