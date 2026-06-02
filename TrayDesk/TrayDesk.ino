@@ -1,10 +1,10 @@
-#include "SR04.h"
+#include "HCSR04.h"
 
 #define VCC_PIN 4
 #define TRIG_PIN 5
 #define ECHO_PIN 6
 #define GROUND_PIN 7
-SR04 sr04 = SR04(ECHO_PIN, TRIG_PIN);
+UltraSonicDistanceSensor sr04(TRIG_PIN, ECHO_PIN);
 
 void setup()
 {
@@ -17,7 +17,7 @@ void setup()
 
 void loop()
 {
-   long a = sr04.Distance();
+   long a = sr04.measureDistanceCm();
    Serial.println(a);
    delay(1000);
 }
