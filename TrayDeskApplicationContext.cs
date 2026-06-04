@@ -12,6 +12,7 @@ namespace TrayDesk
         private readonly Timer _timer;
         private readonly ToolStripMenuItem _pauseMenuItem;
         private readonly ToolStripMenuItem _annoyingMenuItem;
+        private readonly ToolStripMenuItem _startupMenuItem;
         private readonly UpDownTimer _upDownTimer;
 
         private readonly SerialPortParser _serialPortParser;
@@ -28,11 +29,17 @@ namespace TrayDesk
                 CheckOnClick = true,
                 Checked = Settings.Default.Annoying,
             };
+            _startupMenuItem = new ToolStripMenuItem("Run at startup", null, startupToolStripMenuItem_Click)
+            {
+                CheckOnClick = true,
+                Checked = WindowsStartup.IsEnabled,
+            };
 
             var strip = new ContextMenuStrip();
             strip.Items.Add(_pauseMenuItem);
             strip.Items.Add(new ToolStripMenuItem("Reset", null, resetToolStripMenuItem_Click));
             strip.Items.Add(_annoyingMenuItem);
+            strip.Items.Add(_startupMenuItem);
             strip.Items.Add(new ToolStripMenuItem("Settings...", null, settingsToolStripMenuItem_Click));
             strip.Items.Add(new ToolStripSeparator());
             strip.Items.Add(new ToolStripMenuItem("Exit", null, (_, _) => Application.Exit()));
@@ -61,6 +68,12 @@ namespace TrayDesk
             // CheckOnClick has already toggled Checked by the time this fires; just persist it.
             Settings.Default.Annoying = _annoyingMenuItem.Checked;
             Settings.Default.Save();
+        }
+
+        private void startupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // CheckOnClick has already toggled Checked; mirror it into the registry Run entry.
+            WindowsStartup.Set(_startupMenuItem.Checked);
         }
 
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
