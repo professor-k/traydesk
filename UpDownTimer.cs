@@ -14,11 +14,13 @@ namespace TrayDesk
 
         private DateTime _lastReport;
         private bool _lastDown;
-        private bool _locked;
 
         public TimeSpan Up { get; private set; }
         public TimeSpan Down { get; private set; }
         public bool Pause { get; set; }
+
+        /// <summary>True while the PC is locked. Like Pause, time isn't counted and no alerts fire.</summary>
+        public bool Locked { get; private set; }
 
         public double UpShare => Up.TotalSeconds / (Down.TotalSeconds + Up.TotalSeconds);
 
@@ -79,7 +81,7 @@ namespace TrayDesk
         {
             ResetIfDaybreak();
 
-            if (_locked || Pause)
+            if (Locked || Pause)
             {
                 return;
             }
@@ -122,11 +124,11 @@ namespace TrayDesk
         {
             if (e.Reason == SessionSwitchReason.SessionLock)
             {
-                _locked = true;
+                Locked = true;
             }
             else if (e.Reason == SessionSwitchReason.SessionUnlock)
             {
-                _locked = false;
+                Locked = false;
             }
         }
     }

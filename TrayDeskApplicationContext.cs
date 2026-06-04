@@ -92,7 +92,7 @@ namespace TrayDesk
             _serialPortParser.TryReopenIfNeeded();
 
             var iconType = IconBuilder.IconType.Default;
-            if (!_serialPortParser.IsOpen || _upDownTimer.Pause)
+            if (!_serialPortParser.IsOpen || _upDownTimer.Pause || _upDownTimer.Locked)
             {
                 iconType = IconBuilder.IconType.Disconnected;
             }
